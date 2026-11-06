@@ -1,0 +1,34 @@
+---
+import Base from '../layouts/Base.astro';
+import { SITE } from '../consts';
+---
+
+<Base title="关于" description={`关于 ${SITE.author}`} current="about">
+  <article class="prose">
+    <h1>关于</h1>
+
+    <p>
+      这里是 {SITE.author} 的地方。写点技术，也写点别的。
+    </p>
+
+    <p>
+      这篇文字是占位的——改成你自己的就行。比如：你在做什么，
+      关心什么，为什么还想在 2026 年写博客。
+    </p>
+
+    <h2>怎么找到我</h2>
+
+    <ul>
+      <li>GitHub：<a href="https://github.com/">github.com/yourname</a></li>
+      <li>邮箱：you@example.com</li>
+    </ul>
+
+    <h2>关于这个站</h2>
+
+    <p>
+      用 <a href="https://astro.build/">Astro</a> 搭的静态站，
+      文章是 Markdown 文件，托管在 GitHub Pages 上。没有数据库，
+      没有后台，也没有广告。
+    </p>
+  </article>
+</Base>

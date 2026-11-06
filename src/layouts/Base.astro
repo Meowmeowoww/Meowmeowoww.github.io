@@ -1,0 +1,82 @@
+---
+import { SITE } from '../consts';
+import { url } from '../lib/url';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  type?: 'website' | 'article';
+  current?: string;
+}
+
+const {
+  title,
+  description = SITE.description,
+  type = 'website',
+  current = '',
+} = Astro.props;
+
+const pageTitle = title ? `${title} · ${SITE.title}` : SITE.title;
+const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url).href;
+
+const nav = [
+  { href: url('/'), label: '首页', key: 'home' },
+  { href: url('/tags/'), label: '标签', key: 'tags' },
+  { href: url('/about/'), label: '关于', key: 'about' },
+];
+---
+
+<!doctype html>
+<html lang={SITE.lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href={url('/favicon.svg')} type="image/svg+xml" />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title={SITE.title}
+      href={url('/rss.xml')}
+    />
+
+    <meta property="og:type" content={type} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content="summary" />
+    <meta name="generator" content={Astro.generator} />
+  </head>
+  <body>
+    <div class="wrap">
+      <header class="site-header">
+        <a class="brand" href={url('/')}>{SITE.title}</a>
+        <nav class="site-nav">
+          {
+            nav.map((item) => (
+              <a
+                href={item.href}
+                aria-current={current === item.key ? 'page' : undefined}
+              >
+                {item.label}
+              </a>
+            ))
+          }
+          <a href={url('/rss.xml')}>RSS</a>
+        </nav>
+      </header>
+
+      <main>
+        <slot />
+      </main>
+
+      <footer class="site-footer">
+        <span>© {new Date().getFullYear()} {SITE.author}</span>
+        <span><a href={url('/rss.xml')}>RSS</a> · 由 Astro 构建</span>
+      </footer>
+    </div>
+  </body>
+</html>

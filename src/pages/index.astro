@@ -1,0 +1,42 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import { SITE } from '../consts';
+import { formatDate } from '../lib/format';
+import { url } from '../lib/url';
+
+const posts = (
+  await getCollection('posts', ({ data }) =>
+    import.meta.env.PROD ? !data.draft : true
+  )
+).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+---
+
+<Base current="home">
+  <section class="intro">
+    <h1>{SITE.title}</h1>
+    <p>{SITE.description}</p>
+  </section>
+
+  {
+    posts.length === 0 ? (
+      <p class="empty">
+        还没有文章。往 <code>src/content/posts/</code> 里放一个 .md 文件就会出现在这里。
+      </p>
+    ) : (
+      <ul class="post-list">
+        {posts.map((post) => (
+          <li class="post-item">
+            <time datetime={post.data.pubDate.toISOString()}>
+              {formatDate(post.data.pubDate)}
+            </time>
+            <h2>
+              <a href={url(`/posts/${post.id}/`)}>{post.data.title}</a>
+            </h2>
+            {post.data.description && <p>{post.data.description}</p>}
+          </li>
+        ))}
+      </ul>
+    )
+  }
+</Base>

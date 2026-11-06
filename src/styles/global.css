@@ -1,0 +1,358 @@
+/* ── 设计变量：想换配色只改这里 ───────────────── */
+:root {
+  color-scheme: light dark;
+
+  --bg: #fdfcfb;
+  --fg: #1c1b19;
+  --muted: #6f6d68;
+  --line: #e7e3dd;
+  --accent: #b45309;
+  --code-bg: #f4f1ec;
+  --max: 42rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #121110;
+    --fg: #e9e6e1;
+    --muted: #9b978f;
+    --line: #2b2825;
+    --accent: #f0a868;
+    --code-bg: #1d1b18;
+  }
+}
+
+/* ── 基础 ─────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui,
+    'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  font-size: 16px;
+  line-height: 1.85;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.wrap {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 0 1.35rem;
+}
+
+a {
+  color: var(--fg);
+}
+
+/* ── 页头 ─────────────────────────────────────── */
+.site-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 2.1rem 0 1.35rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.brand {
+  font-size: 1.02rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+}
+
+.site-nav {
+  display: flex;
+  gap: 1.15rem;
+}
+
+.site-nav a {
+  color: var(--muted);
+  font-size: 0.88rem;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.site-nav a:hover,
+.site-nav a[aria-current='page'] {
+  color: var(--accent);
+}
+
+/* ── 主体 ─────────────────────────────────────── */
+main {
+  padding: 2.6rem 0 4rem;
+  min-height: 45vh;
+}
+
+.intro h1 {
+  margin: 0 0 0.6rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.5;
+}
+
+.intro p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+/* ── 文章列表 ─────────────────────────────────── */
+.post-list {
+  list-style: none;
+  margin: 2.2rem 0 0;
+  padding: 0;
+}
+
+.post-item {
+  padding: 1.4rem 0;
+  border-top: 1px solid var(--line);
+}
+
+.post-item time {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+  font-variant-numeric: tabular-nums;
+}
+
+.post-item h2 {
+  margin: 0.3rem 0 0.35rem;
+  font-size: 1.12rem;
+  font-weight: 600;
+  line-height: 1.55;
+}
+
+.post-item h2 a {
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.post-item h2 a:hover {
+  color: var(--accent);
+}
+
+.post-item p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.7;
+}
+
+/* ── 文章页 ───────────────────────────────────── */
+.post-header {
+  margin-bottom: 2.2rem;
+}
+
+.post-header h1 {
+  margin: 0 0 0.7rem;
+  font-size: 1.72rem;
+  font-weight: 650;
+  line-height: 1.4;
+  letter-spacing: -0.012em;
+}
+
+.post-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.post-tags {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.tag {
+  color: var(--muted);
+  text-decoration: none;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.05rem 0.55rem;
+  font-size: 0.75rem;
+  line-height: 1.7;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.tag:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* ── 正文排版 ─────────────────────────────────── */
+.prose {
+  font-size: 1.02rem;
+}
+
+.prose > :first-child {
+  margin-top: 0;
+}
+
+.prose h2 {
+  margin: 2.5rem 0 0.85rem;
+  font-size: 1.28rem;
+  font-weight: 650;
+  line-height: 1.5;
+}
+
+.prose h3 {
+  margin: 2rem 0 0.7rem;
+  font-size: 1.08rem;
+  font-weight: 650;
+}
+
+.prose p {
+  margin: 1.1rem 0;
+}
+
+.prose ul,
+.prose ol {
+  margin: 1.1rem 0;
+  padding-left: 1.25rem;
+}
+
+.prose li {
+  margin: 0.35rem 0;
+}
+
+.prose li::marker {
+  color: var(--muted);
+}
+
+.prose a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+
+.prose strong {
+  font-weight: 620;
+}
+
+.prose blockquote {
+  margin: 1.6rem 0;
+  padding: 0.1rem 0 0.1rem 1.1rem;
+  border-left: 2px solid var(--line);
+  color: var(--muted);
+}
+
+.prose blockquote p {
+  margin: 0.5rem 0;
+}
+
+.prose hr {
+  margin: 2.8rem 0;
+  border: 0;
+  border-top: 1px solid var(--line);
+}
+
+.prose code {
+  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas,
+    'Liberation Mono', monospace;
+  font-size: 0.86em;
+  background: var(--code-bg);
+  padding: 0.15em 0.38em;
+  border-radius: 4px;
+}
+
+.prose pre {
+  margin: 1.4rem 0;
+  padding: 1rem 1.15rem;
+  background: var(--code-bg);
+  border-radius: 8px;
+  overflow-x: auto;
+  line-height: 1.65;
+  font-size: 0.86rem;
+}
+
+.prose pre code {
+  background: none;
+  padding: 0;
+  font-size: inherit;
+}
+
+.prose img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 6px;
+}
+
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.4rem 0;
+  font-size: 0.9rem;
+}
+
+.prose th,
+.prose td {
+  border-bottom: 1px solid var(--line);
+  padding: 0.5rem 0.6rem;
+  text-align: left;
+}
+
+.prose th {
+  font-weight: 600;
+  color: var(--muted);
+}
+
+/* ── 页脚 ─────────────────────────────────────── */
+.site-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 1.6rem 0 3rem;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.site-footer a {
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.site-footer a:hover {
+  color: var(--accent);
+}
+
+/* ── 空状态 / 404 ─────────────────────────────── */
+.empty {
+  color: var(--muted);
+  font-size: 0.92rem;
+  margin-top: 2rem;
+}
+
+.notfound {
+  text-align: left;
+  padding: 2rem 0;
+}
+
+.notfound .code {
+  font-size: 3.2rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--line);
+  line-height: 1;
+  margin: 0 0 0.8rem;
+}

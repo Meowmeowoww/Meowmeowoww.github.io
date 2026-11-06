@@ -1,0 +1,12 @@
+---
+import Base from '../layouts/Base.astro';
+import { url } from '../lib/url';
+---
+
+<Base title="页面走丢了" description="404">
+  <div class="notfound">
+    <p class="code">404</p>
+    <p>这个地址没有东西。可能是链接旧了，也可能是我写错了。</p>
+    <p><a href={url('/')}>回首页</a></p>
+  </div>
+</Base>
