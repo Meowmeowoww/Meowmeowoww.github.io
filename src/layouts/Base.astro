@@ -2,6 +2,7 @@
 import { SITE } from '../consts';
 import { url } from '../lib/url';
 import LightBeams from '../components/LightBeams.astro';
+import SearchBox from '../components/SearchBox.astro';
 import '../styles/global.css';
 
 interface Props {
@@ -60,6 +61,8 @@ const nav = [
 
     <div class:list={['shell', wide && 'shell-wide']}>
       <header class="topbar">
+        <span class="topbar-spacer" aria-hidden="true"></span>
+
         <nav class="topnav">
           {
             nav.map((item) => (
@@ -85,6 +88,8 @@ const nav = [
             ))
           }
         </nav>
+
+        <SearchBox />
       </header>
 
       <main>
