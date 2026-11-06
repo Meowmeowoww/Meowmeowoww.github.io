@@ -1,10 +1,11 @@
 ---
-// 背景三层：图片（压暗）→ 渐变蒙版 → 四道光束。
-// 光束机制参考 laplace.live：200px 宽的固定容器 + 旋转的长条渐变 + blur，
-// 鼠标移动时按 data-depth 做视差。这里是重写的实现，没有引入 parallax 库。
+// 背景四层：图片（压暗）→ 渐变蒙版 → 高光 → 光束。
+// 机制参考 laplace.live：光标在页面里时才「激活」，整层随光标做视差；
+// 光标离开窗口就淡回待机态并回中。这里是重写的实现，没引入动效库。
 ---
 <div class="bg" aria-hidden="true"></div>
 <div class="bg-grad" aria-hidden="true"></div>
+<div class="glow" aria-hidden="true"></div>
 
 <div class="lights" data-depth="0.2" aria-hidden="true"><div class="light"></div></div>
 <div class="lights" data-depth="0.6" aria-hidden="true"><div class="light light2"></div></div>
@@ -12,57 +13,86 @@
 <div class="lights" data-depth="0.5" aria-hidden="true"><div class="light light4"></div></div>
 
 <script>
+  const root = document.documentElement;
   const layers = Array.from(document.querySelectorAll<HTMLElement>('.lights'));
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
 
   if (layers.length) {
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
-
-    let targetX = 0;
-    let targetY = 0;
+    // tx/ty 是目标位置（-1..1），x/y 是缓动后的实际位置
+    let tx = 0;
+    let ty = 0;
     let x = 0;
     let y = 0;
     let raf = 0;
+    let active = false;
+
+    function tick() {
+      raf = 0;
+
+      x += (tx - x) * 0.06;
+      y += (ty - y) * 0.06;
+
+      for (const el of layers) {
+        const depth = Number(el.dataset.depth) || 0.2;
+        el.style.transform = `translate3d(${(x * 22 * depth).toFixed(2)}px, ${(y * 22 * depth).toFixed(2)}px, 0)`;
+      }
+
+      // 背景图反向、小幅度地跟，制造景深
+      root.style.setProperty('--par-x', `${(x * -14).toFixed(2)}px`);
+      root.style.setProperty('--par-y', `${(y * -10).toFixed(2)}px`);
+
+      const settled = Math.abs(x) < 0.001 && Math.abs(y) < 0.001;
+
+      // 待机且已经回中就不再跑帧，省电
+      if (active || !settled) raf = requestAnimationFrame(tick);
+    }
+
+    function start() {
+      if (!raf && !reduce.matches) raf = requestAnimationFrame(tick);
+    }
+
+    function setActive(on: boolean) {
+      if (on === active) return;
+      active = on;
+      root.classList.toggle('pointer-active', on);
+
+      if (!on) {
+        // 离开时目标归零，让它自己缓回去
+        tx = 0;
+        ty = 0;
+      }
+      start();
+    }
 
     window.addEventListener(
       'pointermove',
       (e) => {
-        targetX = (e.clientX / window.innerWidth - 0.5) * 2;
-        targetY = (e.clientY / window.innerHeight - 0.5) * 2;
+        // 高光直接贴着光标，不做缓动
+        root.style.setProperty('--mx', `${e.clientX}px`);
+        root.style.setProperty('--my', `${e.clientY}px`);
+
+        if (reduce.matches) return;
+
+        setActive(true);
+        tx = (e.clientX / window.innerWidth - 0.5) * 2;
+        ty = (e.clientY / window.innerHeight - 0.5) * 2;
+        start();
       },
       { passive: true }
     );
 
-    // 鼠标离开窗口时回中
-    window.addEventListener('pointerleave', () => {
-      targetX = 0;
-      targetY = 0;
+    // 光标离开窗口 / 切到别的标签页 → 待机
+    document.addEventListener('pointerleave', () => setActive(false));
+    window.addEventListener('blur', () => setActive(false));
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) setActive(false);
     });
-
-    function tick() {
-      raf = requestAnimationFrame(tick);
-      x += (targetX - x) * 0.045;
-      y += (targetY - y) * 0.045;
-
-      for (const el of layers) {
-        const depth = Number(el.dataset.depth) || 0.2;
-        const tx = (x * 22 * depth).toFixed(2);
-        const ty = (y * 22 * depth).toFixed(2);
-        el.style.transform = `translate3d(${tx}px, ${ty}px, 0)`;
-      }
-    }
-
-    if (!reduce.matches) raf = requestAnimationFrame(tick);
 
     reduce.addEventListener('change', () => {
-      cancelAnimationFrame(raf);
-      if (!reduce.matches) raf = requestAnimationFrame(tick);
-    });
-
-    document.addEventListener('visibilitychange', () => {
-      if (document.hidden) {
+      if (reduce.matches) {
+        setActive(false);
         cancelAnimationFrame(raf);
-      } else if (!reduce.matches) {
-        raf = requestAnimationFrame(tick);
+        raf = 0;
       }
     });
   }

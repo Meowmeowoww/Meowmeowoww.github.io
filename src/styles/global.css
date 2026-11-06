@@ -69,15 +69,22 @@ a {
   color: var(--link);
 }
 
-/* ── 背景三层：图片 / 渐变蒙版 / 光束 ───────────── */
+/* ── 背景四层：图片 / 渐变蒙版 / 高光 / 光束 ─────── */
+/* 光标不在页面里时是「待机」态：整层压暗、光束收敛；移进来才亮起来。 */
 .bg {
   position: fixed;
   inset: 0;
   z-index: 0;
   background: url('/bg.jpg') center / cover no-repeat;
-  filter: brightness(0.3) contrast(1.06) saturate(0.82) blur(6px);
-  transform: scale(1.06);
+  filter: brightness(0.24) contrast(1.06) saturate(0.8) blur(6px);
+  transform: translate3d(var(--par-x, 0px), var(--par-y, 0px), 0) scale(1.08);
+  transition: filter 0.7s ease;
   pointer-events: none;
+  will-change: transform;
+}
+
+.pointer-active .bg {
+  filter: brightness(0.34) contrast(1.06) saturate(0.92) blur(4px);
 }
 
 .bg-grad {
@@ -93,6 +100,25 @@ a {
   );
 }
 
+/* 贴着光标走的一块柔光，不做缓动 */
+.glow {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  background: radial-gradient(
+    24rem 24rem at var(--mx, 50%) var(--my, 50%),
+    oklch(0.9 0.06 150 / 0.16),
+    transparent 70%
+  );
+}
+
+.pointer-active .glow {
+  opacity: 1;
+}
+
 .lights {
   position: fixed;
   top: 0;
@@ -100,9 +126,14 @@ a {
   z-index: 2;
   width: 200px;
   height: calc(100lvw + 100lvh);
-  opacity: 0.82;
+  opacity: 0.32;
+  transition: opacity 0.7s ease;
   pointer-events: none;
   will-change: transform;
+}
+
+.pointer-active .lights {
+  opacity: 0.95;
 }
 
 .lights .light {
