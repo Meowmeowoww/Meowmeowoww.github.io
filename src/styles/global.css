@@ -67,10 +67,16 @@ a {
 }
 
 .brand {
-  font-size: 1.02rem;
+  font-size: 0.95rem;
   font-weight: 600;
   letter-spacing: 0.01em;
   text-decoration: none;
+  color: var(--muted);
+  transition: color 0.15s ease;
+}
+
+.brand:hover {
+  color: var(--accent);
 }
 
 .site-nav {
@@ -156,6 +162,21 @@ main {
 /* ── 文章页 ───────────────────────────────────── */
 .post-header {
   margin-bottom: 2.2rem;
+}
+
+.back {
+  margin: 0 0 1.6rem;
+  font-size: 0.82rem;
+}
+
+.back a {
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.back a:hover {
+  color: var(--accent);
 }
 
 .post-header h1 {
