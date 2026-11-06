@@ -77,7 +77,8 @@ a {
   z-index: 0;
   background: url('/bg.jpg') center / cover no-repeat;
   filter: brightness(0.24) contrast(1.06) saturate(0.8) blur(6px);
-  transform: translate3d(var(--par-x, 0px), var(--par-y, 0px), 0) scale(1.08);
+  transform: translate3d(var(--par-x, 0px), var(--par-y, 0px), 0)
+    scale(calc(1.08 + var(--zoom, 0) * 0.05));
   transition: filter 0.7s ease;
   pointer-events: none;
   will-change: transform;
@@ -1104,5 +1105,64 @@ main {
   .docs-pager .next {
     grid-column: 1;
     text-align: left;
+  }
+}
+
+/* ── 光标拖尾 ───────────────────────────────────── */
+.trail {
+  position: fixed;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+.pointer-active .trail {
+  opacity: 1;
+}
+
+.trail span {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: calc(12px - var(--i) * 0.9px);
+  height: calc(12px - var(--i) * 0.9px);
+  margin-left: calc(-6px + var(--i) * 0.45px);
+  margin-top: calc(-6px + var(--i) * 0.45px);
+  border-radius: 50%;
+  background: oklch(0.96 0.08 150 / calc(0.5 - var(--i) * 0.035));
+  filter: blur(calc(var(--i) * 0.3px));
+  will-change: transform;
+}
+
+/* ── 页面转场 ───────────────────────────────────── */
+/* 由 Base.astro 里的 ClientRouter 触发；两页之间整体轻微位移 + 淡入淡出 */
+@keyframes page-out {
+  to {
+    opacity: 0;
+    transform: translate3d(0, -12px, 0) scale(0.995);
+  }
+}
+
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 16px, 0) scale(0.995);
+  }
+}
+
+::view-transition-old(root) {
+  animation: page-out 0.24s ease both;
+}
+
+::view-transition-new(root) {
+  animation: page-in 0.36s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
   }
 }

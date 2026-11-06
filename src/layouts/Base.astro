@@ -1,6 +1,7 @@
 ---
 import { SITE } from '../consts';
 import { url } from '../lib/url';
+import { ClientRouter } from 'astro:transitions';
 import LightBeams from '../components/LightBeams.astro';
 import SearchBox from '../components/SearchBox.astro';
 import '../styles/global.css';
@@ -55,6 +56,8 @@ const nav = [
     <meta property="og:url" content={canonical} />
     <meta name="twitter:card" content="summary" />
     <meta name="generator" content={Astro.generator} />
+    {/* 客户端路由 + 页面转场，动画样式写在 global.css 的 view-transition 段 */}
+    <ClientRouter />
   </head>
   <body>
     <LightBeams />

@@ -84,14 +84,15 @@ const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
 </Base>
 
 <script>
-  const links = Array.from(
-    document.querySelectorAll<HTMLAnchorElement>('.toc a')
-  );
-  const heads = links
-    .map((a) => document.getElementById(decodeURIComponent(a.hash.slice(1))))
-    .filter((el): el is HTMLElement => Boolean(el));
+  // 开了页面转场后，导航时 DOM 会重建，所以每次 page-load 都要重新绑定
+  function initToc() {
+    const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('.toc a'));
+    const heads = links
+      .map((a) => document.getElementById(decodeURIComponent(a.hash.slice(1))))
+      .filter((el): el is HTMLElement => Boolean(el));
 
-  if (heads.length && 'IntersectionObserver' in window) {
+    if (!heads.length || !('IntersectionObserver' in window)) return;
+
     const setActive = (id: string) => {
       for (const a of links) {
         a.classList.toggle('is-active', a.hash === `#${id}`);
@@ -110,4 +111,7 @@ const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
 
     for (const h of heads) io.observe(h);
   }
+
+  initToc();
+  document.addEventListener('astro:page-load', initToc);
 </script>

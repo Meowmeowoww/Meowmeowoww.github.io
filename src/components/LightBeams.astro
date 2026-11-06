@@ -1,6 +1,6 @@
 ---
-// 背景四层：图片（压暗）→ 渐变蒙版 → 高光 → 光束。
-// 机制参考 laplace.live：光标在页面里时才「激活」，整层随光标做视差；
+// 背景四层：图片（压暗）→ 渐变蒙版 → 高光 → 光束，外加一层光标拖尾。
+// 机制参考 laplace.live：光标在页面里时才「激活」，整层随光标做视差 + 轻微缩放；
 // 光标离开窗口就淡回待机态并回中。这里是重写的实现，没引入动效库。
 ---
 <div class="bg" aria-hidden="true"></div>
@@ -12,88 +12,145 @@
 <div class="lights" data-depth="0.3" aria-hidden="true"><div class="light light3"></div></div>
 <div class="lights" data-depth="0.5" aria-hidden="true"><div class="light light4"></div></div>
 
+<div class="trail" aria-hidden="true">
+  <span style="--i:0"></span>
+  <span style="--i:1"></span>
+  <span style="--i:2"></span>
+  <span style="--i:3"></span>
+  <span style="--i:4"></span>
+  <span style="--i:5"></span>
+  <span style="--i:6"></span>
+  <span style="--i:7"></span>
+  <span style="--i:8"></span>
+  <span style="--i:9"></span>
+  <span style="--i:10"></span>
+  <span style="--i:11"></span>
+</div>
+
 <script>
   const root = document.documentElement;
-  const layers = Array.from(document.querySelectorAll<HTMLElement>('.lights'));
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
 
-  if (layers.length) {
-    // tx/ty 是目标位置（-1..1），x/y 是缓动后的实际位置
-    let tx = 0;
-    let ty = 0;
-    let x = 0;
-    let y = 0;
-    let raf = 0;
-    let active = false;
+  let layers: HTMLElement[] = [];
+  let dots: { el: HTMLElement; x: number; y: number }[] = [];
 
-    function tick() {
-      raf = 0;
+  // tx/ty 是目标位置（-1..1），x/y 是缓动后的实际位置
+  let tx = 0;
+  let ty = 0;
+  let x = 0;
+  let y = 0;
+  let raf = 0;
+  let active = false;
+  let hasPointer = false;
+  let px = 0; // 光标实际坐标，拖尾从这儿出发
+  let py = 0;
 
-      x += (tx - x) * 0.06;
-      y += (ty - y) * 0.06;
-
-      for (const el of layers) {
-        const depth = Number(el.dataset.depth) || 0.2;
-        el.style.transform = `translate3d(${(x * 22 * depth).toFixed(2)}px, ${(y * 22 * depth).toFixed(2)}px, 0)`;
-      }
-
-      // 背景图反向、小幅度地跟，制造景深
-      root.style.setProperty('--par-x', `${(x * -14).toFixed(2)}px`);
-      root.style.setProperty('--par-y', `${(y * -10).toFixed(2)}px`);
-
-      const settled = Math.abs(x) < 0.001 && Math.abs(y) < 0.001;
-
-      // 待机且已经回中就不再跑帧，省电
-      if (active || !settled) raf = requestAnimationFrame(tick);
-    }
-
-    function start() {
-      if (!raf && !reduce.matches) raf = requestAnimationFrame(tick);
-    }
-
-    function setActive(on: boolean) {
-      if (on === active) return;
-      active = on;
-      root.classList.toggle('pointer-active', on);
-
-      if (!on) {
-        // 离开时目标归零，让它自己缓回去
-        tx = 0;
-        ty = 0;
-      }
-      start();
-    }
-
-    window.addEventListener(
-      'pointermove',
-      (e) => {
-        // 高光直接贴着光标，不做缓动
-        root.style.setProperty('--mx', `${e.clientX}px`);
-        root.style.setProperty('--my', `${e.clientY}px`);
-
-        if (reduce.matches) return;
-
-        setActive(true);
-        tx = (e.clientX / window.innerWidth - 0.5) * 2;
-        ty = (e.clientY / window.innerHeight - 0.5) * 2;
-        start();
-      },
-      { passive: true }
-    );
-
-    // 光标离开窗口 / 切到别的标签页 → 待机
-    document.addEventListener('pointerleave', () => setActive(false));
-    window.addEventListener('blur', () => setActive(false));
-    document.addEventListener('visibilitychange', () => {
-      if (document.hidden) setActive(false);
-    });
-
-    reduce.addEventListener('change', () => {
-      if (reduce.matches) {
-        setActive(false);
-        cancelAnimationFrame(raf);
-        raf = 0;
-      }
-    });
+  function initDom() {
+    layers = Array.from(document.querySelectorAll<HTMLElement>('.lights'));
+    dots = Array.from(document.querySelectorAll<HTMLElement>('.trail span')).map((el) => ({
+      el,
+      x: px,
+      y: py,
+    }));
   }
+
+  function tick() {
+    raf = 0;
+
+    x += (tx - x) * 0.06;
+    y += (ty - y) * 0.06;
+
+    for (const el of layers) {
+      const depth = Number(el.dataset.depth) || 0.2;
+      el.style.transform = `translate3d(${(x * 22 * depth).toFixed(2)}px, ${(y * 22 * depth).toFixed(2)}px, 0)`;
+    }
+
+    // 背景：反向小位移 + 越靠边越大一点的缩放
+    const spread = Math.min(1, Math.hypot(x, y) / 1.2);
+    root.style.setProperty('--par-x', `${(x * -14).toFixed(2)}px`);
+    root.style.setProperty('--par-y', `${(y * -10).toFixed(2)}px`);
+    root.style.setProperty('--zoom', spread.toFixed(3));
+
+    // 拖尾：每个点追前一个点，越靠后越慢
+    let leadX = px;
+    let leadY = py;
+    for (const d of dots) {
+      d.x += (leadX - d.x) * 0.3;
+      d.y += (leadY - d.y) * 0.3;
+      d.el.style.transform = `translate3d(${d.x.toFixed(2)}px, ${d.y.toFixed(2)}px, 0)`;
+      leadX = d.x;
+      leadY = d.y;
+    }
+
+    const settled =
+      Math.abs(x) < 0.001 && Math.abs(y) < 0.001 && Math.abs(tx) < 0.001 && Math.abs(ty) < 0.001;
+
+    // 待机且已经回中就不再跑帧，省电
+    if (active || !settled) raf = requestAnimationFrame(tick);
+  }
+
+  function start() {
+    if (!raf && !reduce.matches) raf = requestAnimationFrame(tick);
+  }
+
+  function setActive(on: boolean) {
+    if (on === active) return;
+    active = on;
+    root.classList.toggle('pointer-active', on);
+
+    if (!on) {
+      // 离开时目标归零，让它自己缓回去
+      tx = 0;
+      ty = 0;
+    }
+    start();
+  }
+
+  window.addEventListener(
+    'pointermove',
+    (e) => {
+      px = e.clientX;
+      py = e.clientY;
+
+      // 高光直接贴着光标，不做缓动
+      root.style.setProperty('--mx', `${px}px`);
+      root.style.setProperty('--my', `${py}px`);
+
+      if (reduce.matches) return;
+
+      // 第一次移动时把拖尾的点直接放到光标位置，避免从左上角飞进来
+      if (!hasPointer) {
+        hasPointer = true;
+        for (const d of dots) {
+          d.x = px;
+          d.y = py;
+        }
+      }
+
+      setActive(true);
+      tx = (px / window.innerWidth - 0.5) * 2;
+      ty = (py / window.innerHeight - 0.5) * 2;
+      start();
+    },
+    { passive: true }
+  );
+
+  // 光标离开窗口 / 切到别的标签页 → 待机
+  document.addEventListener('pointerleave', () => setActive(false));
+  window.addEventListener('blur', () => setActive(false));
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) setActive(false);
+  });
+
+  reduce.addEventListener('change', () => {
+    if (reduce.matches) {
+      setActive(false);
+      cancelAnimationFrame(raf);
+      raf = 0;
+    }
+  });
+
+  initDom();
+  // 开了页面转场后，导航时 DOM 会被替换，这里重新取一次节点
+  document.addEventListener('astro:page-load', initDom);
 </script>

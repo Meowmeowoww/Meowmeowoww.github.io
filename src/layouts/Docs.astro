@@ -86,15 +86,22 @@ const { title, description, group, groups, current, prev, next } = Astro.props;
 
 <script>
   // 给正文标题加一个 # 锚点，鼠标移上去才出现
-  for (const heading of document.querySelectorAll<HTMLElement>('.docs-prose h2[id], .docs-prose h3[id]')) {
-    const anchor = document.createElement('a');
-    anchor.className = 'heading-anchor';
-    anchor.href = `#${heading.id}`;
-    anchor.setAttribute('aria-label', '复制锚点链接');
-    anchor.textContent = '#';
-    anchor.addEventListener('click', () => {
-      navigator.clipboard?.writeText(anchor.href).catch(() => {});
-    });
-    heading.appendChild(anchor);
+  function initAnchors() {
+    for (const heading of document.querySelectorAll<HTMLElement>('.docs-prose h2[id], .docs-prose h3[id]')) {
+      if (heading.querySelector('.heading-anchor')) continue; // 重复进入时别加两遍
+      const anchor = document.createElement('a');
+      anchor.className = 'heading-anchor';
+      anchor.href = `#${heading.id}`;
+      anchor.setAttribute('aria-label', '复制锚点链接');
+      anchor.textContent = '#';
+      anchor.addEventListener('click', () => {
+        navigator.clipboard?.writeText(anchor.href).catch(() => {});
+      });
+      heading.appendChild(anchor);
+    }
   }
+
+  initAnchors();
+  // 页面转场后 DOM 会重建，重新挂一次
+  document.addEventListener('astro:page-load', initAnchors);
 </script>
