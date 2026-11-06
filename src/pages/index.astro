@@ -1,7 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
-import { SITE } from '../consts';
 import { formatDate } from '../lib/format';
 import { url } from '../lib/url';
 
@@ -13,11 +12,6 @@ const posts = (
 ---
 
 <Base current="home">
-  <section class="hero">
-    <h1 class="hero-title">{SITE.title}</h1>
-    <p class="hero-sub">{SITE.description}</p>
-  </section>
-
   {
     posts.length === 0 ? (
       <p class="empty">

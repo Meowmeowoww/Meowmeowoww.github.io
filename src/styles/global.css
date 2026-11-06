@@ -196,6 +196,7 @@ a {
   gap: 0.42rem;
   color: var(--muted);
   font-size: 0.92rem;
+  font-weight: 600;
   text-decoration: none;
   white-space: nowrap;
   flex: 0 0 auto;
@@ -373,27 +374,37 @@ main {
   min-height: 52vh;
 }
 
-/* ── 首页 hero ────────────────────────────────── */
-.hero {
+/* ── 站名大标题（masthead） ───────────────────── */
+.masthead {
   text-align: center;
-  padding: 3.4rem 0 3.2rem;
+  padding: 2.9rem 0 2.9rem;
 }
 
-.hero-title {
+.brandmark {
+  display: inline-block;
   margin: 0;
-  font-size: clamp(2.5rem, 6.4vw, 4.1rem);
+  color: var(--fg);
+  font-size: clamp(2.7rem, 6.2vw, 3.9rem);
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.12em;
   line-height: 1.15;
-  text-shadow: 0 0 90px rgba(180, 255, 212, 0.22),
+  text-decoration: none;
+  text-shadow: 0 0 90px rgba(180, 255, 212, 0.24),
     0 0 24px rgba(150, 240, 190, 0.12);
+  transition: color 0.25s ease, text-shadow 0.25s ease;
 }
 
-.hero-sub {
-  margin: 1rem 0 0;
+.brandmark:hover {
+  color: #fff;
+  text-shadow: 0 0 110px rgba(190, 255, 220, 0.34),
+    0 0 28px rgba(160, 245, 200, 0.18);
+}
+
+.brandtag {
+  margin: 0.85rem 0 0;
   color: var(--muted);
-  font-size: 0.95rem;
-  letter-spacing: 0.02em;
+  font-size: 0.94rem;
+  letter-spacing: 0.04em;
 }
 
 /* ── 普通页头 ─────────────────────────────────── */

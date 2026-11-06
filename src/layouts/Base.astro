@@ -25,6 +25,9 @@ const {
 const pageTitle = title ? `${title} · ${SITE.title}` : SITE.title;
 const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url).href;
 
+// 文章页自己有大标题，就不要再叠一个站名
+const showBrand = current !== 'posts';
+
 const nav = [
   { href: url('/'), label: '首页', key: 'home', d: 'M3 10.6 12 3.4l9 7.2M5.6 9.4V20h12.8V9.4' },
   { href: url('/tags/'), label: '标签', key: 'tags', d: 'M3.5 11.6V4.2h7.4l9.4 9.4-7.4 7.4-9.4-9.4ZM7.6 7.6h.01' },
@@ -95,6 +98,17 @@ const nav = [
 
         <SearchBox />
       </header>
+
+      {
+        showBrand && (
+          <div class="masthead">
+            <a class="brandmark" href={url('/')}>
+              {SITE.title}
+            </a>
+            <p class="brandtag">{SITE.description}</p>
+          </div>
+        )
+      }
 
       <main>
         <slot />
