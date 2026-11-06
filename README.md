@@ -59,6 +59,9 @@ npm install
 npm run dev        # 打开 http://localhost:4321
 ```
 
+> 如果 PowerShell 报「因为在此系统上禁止运行脚本」，先跑一次这条再试：
+> `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`
+
 其它命令：
 
 ```powershell
