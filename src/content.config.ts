@@ -13,4 +13,16 @@ const posts = defineCollection({
   }),
 });
 
-export const collections = { posts };
+// 文档页。group 决定左侧栏的分组，order 决定组内和组间的排序。
+const docs = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/docs' }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string().default(''),
+    group: z.string().default('文档'),
+    order: z.number().default(0),
+    draft: z.boolean().default(false),
+  }),
+});
+
+export const collections = { posts, docs };

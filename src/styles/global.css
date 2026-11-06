@@ -592,3 +592,330 @@ main {
   line-height: 1;
   margin: 0 0 0.9rem;
 }
+
+/* ── 文档页：左侧栏 + 正文 ─────────────────────── */
+.docs {
+  display: grid;
+  grid-template-columns: 15rem minmax(0, 1fr);
+  gap: 3rem;
+  align-items: start;
+}
+
+.docs-side {
+  position: sticky;
+  top: 1.8rem;
+  max-height: calc(100dvh - 3rem);
+  overflow-y: auto;
+  padding-bottom: 1rem;
+  font-size: 0.83rem;
+  scrollbar-width: thin;
+}
+
+.docs-side-title {
+  margin: 0 0 0.9rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.docs-group-block + .docs-group-block {
+  margin-top: 1.3rem;
+}
+
+.docs-group {
+  margin: 0 0 0.4rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  opacity: 0.85;
+}
+
+.docs-side ul {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 0.65rem;
+  border-left: 1px solid var(--line);
+}
+
+.docs-side li {
+  margin: 0.1rem 0;
+}
+
+.docs-side a {
+  display: block;
+  padding: 0.24rem 0.55rem;
+  margin-left: -1px;
+  border-left: 1px solid transparent;
+  border-radius: 0 5px 5px 0;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+}
+
+.docs-side a:hover {
+  color: var(--fg);
+  background: color-mix(in oklch, var(--fg) 6%, transparent);
+}
+
+.docs-side a[aria-current='page'] {
+  color: var(--link);
+  border-left-color: var(--accent);
+  background: color-mix(in oklch, var(--fg) 8%, transparent);
+}
+
+.crumbs {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 1.1rem;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.crumbs a {
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.crumbs a:hover {
+  color: var(--fg);
+}
+
+.crumbs span {
+  opacity: 0.6;
+}
+
+.docs-header {
+  margin-bottom: 2.1rem;
+  padding-bottom: 1.3rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.docs-header h1 {
+  margin: 0 0 0.55rem;
+  font-size: clamp(1.9rem, 4vw, 2.5rem);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.docs-desc {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+/* 标题锚点 */
+.heading-anchor {
+  margin-left: 0.45rem;
+  color: var(--muted);
+  text-decoration: none;
+  font-weight: 400;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.prose h2:hover .heading-anchor,
+.prose h3:hover .heading-anchor,
+.heading-anchor:focus-visible {
+  opacity: 0.65;
+}
+
+/* 提示框 */
+.callout {
+  margin: 1.5rem 0;
+  padding: 0.8rem 1rem;
+  border: 1px solid;
+  border-left-width: 3px;
+  border-radius: 8px;
+  font-size: 0.92rem;
+  line-height: 1.7;
+}
+
+.callout p {
+  margin: 0.35rem 0;
+}
+
+.callout p:first-child {
+  margin-top: 0;
+}
+
+.callout p:last-child {
+  margin-bottom: 0;
+}
+
+.callout-title {
+  font-weight: 640;
+  letter-spacing: 0.02em;
+}
+
+.callout-info {
+  border-color: #5aa9e6;
+  background: rgba(90, 169, 230, 0.1);
+}
+
+.callout-info .callout-title {
+  color: #8ecbff;
+}
+
+.callout-warn {
+  border-color: #d8a54a;
+  background: rgba(216, 165, 74, 0.1);
+}
+
+.callout-warn .callout-title {
+  color: #f0c777;
+}
+
+.callout-danger {
+  border-color: #d96b78;
+  background: rgba(217, 107, 120, 0.1);
+}
+
+.callout-danger .callout-title {
+  color: #ff9aa6;
+}
+
+/* 卡片 */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(13.5rem, 1fr));
+  gap: 0.75rem;
+  margin: 1.4rem 0;
+}
+
+.card {
+  display: block;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: color-mix(in oklch, var(--fg) 4%, transparent);
+  text-decoration: none;
+  transition: border-color 0.18s ease, background 0.18s ease, transform 0.18s ease;
+}
+
+.card:hover {
+  border-color: var(--line-strong);
+  background: color-mix(in oklch, var(--fg) 7%, transparent);
+  transform: translateY(-2px);
+}
+
+/* 正文里的 a 默认带下划线，卡片要盖掉 */
+.prose .card,
+.prose .card:hover {
+  text-decoration: none;
+}
+
+.card-title {
+  display: block;
+  color: var(--link);
+  font-size: 0.94rem;
+  font-weight: 600;
+}
+
+.card-desc {
+  display: block;
+  margin-top: 0.25rem;
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.6;
+}
+
+/* 翻页 */
+.docs-pager {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-top: 3rem;
+  padding-top: 1.4rem;
+  border-top: 1px solid var(--line);
+}
+
+.docs-pager a {
+  display: block;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  text-decoration: none;
+  transition: border-color 0.18s ease, background 0.18s ease;
+}
+
+.docs-pager a:hover {
+  border-color: var(--line-strong);
+  background: color-mix(in oklch, var(--fg) 5%, transparent);
+}
+
+.docs-pager .next {
+  grid-column: 2;
+  text-align: right;
+}
+
+.docs-pager .label {
+  display: block;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+}
+
+.docs-pager .name {
+  display: block;
+  margin-top: 0.2rem;
+  color: var(--link);
+  font-size: 0.88rem;
+}
+
+/* 文档索引页 */
+.doc-index-group {
+  margin: 2.4rem 0 0;
+}
+
+.doc-index-title {
+  margin: 0 0 0.9rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.docs-intro {
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 900px) {
+  .docs {
+    grid-template-columns: 1fr;
+    gap: 1.6rem;
+  }
+
+  .docs-side {
+    position: static;
+    max-height: none;
+    padding-bottom: 1.2rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .docs-side ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    padding-left: 0;
+    border-left: 0;
+  }
+
+  .docs-side a {
+    border-left: 0;
+    border-radius: 999px;
+    background: color-mix(in oklch, var(--fg) 5%, transparent);
+  }
+
+  .docs-pager {
+    grid-template-columns: 1fr;
+  }
+
+  .docs-pager .next {
+    grid-column: 1;
+    text-align: left;
+  }
+}

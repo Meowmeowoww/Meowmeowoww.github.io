@@ -1,0 +1,100 @@
+---
+import Base from './Base.astro';
+import { url } from '../lib/url';
+import type { Doc } from '../lib/docs';
+
+interface Props {
+  title: string;
+  description?: string;
+  group?: string;
+  /** 左侧栏用：已分好组的全部文档 */
+  groups: { name: string; items: Doc[] }[];
+  /** 当前文档 id，用来高亮 */
+  current: string;
+  prev?: Doc | null;
+  next?: Doc | null;
+}
+
+const { title, description, group, groups, current, prev, next } = Astro.props;
+---
+
+<Base wide title={title} description={description} current="docs">
+  <div class="docs">
+    <aside class="docs-side">
+      <p class="docs-side-title">文档</p>
+      {
+        groups.map((g) => (
+          <div class="docs-group-block">
+            <p class="docs-group">{g.name}</p>
+            <ul>
+              {g.items.map((doc) => (
+                <li>
+                  <a
+                    href={url(`/docs/${doc.id}/`)}
+                    aria-current={doc.id === current ? 'page' : undefined}
+                  >
+                    {doc.data.title}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </aside>
+
+    <article class="docs-main">
+      <nav class="crumbs" aria-label="面包屑">
+        <a href={url('/docs/')}>文档</a>
+        {group && <><span>/</span><span>{group}</span></>}
+      </nav>
+
+      <header class="docs-header">
+        <h1>{title}</h1>
+        {description && <p class="docs-desc">{description}</p>}
+      </header>
+
+      <div class="prose docs-prose">
+        <slot />
+      </div>
+
+      {
+        (prev || next) && (
+          <nav class="docs-pager" aria-label="翻页">
+            {prev ? (
+              <a class="prev" href={url(`/docs/${prev.id}/`)}>
+                <span class="label">上一篇</span>
+                <span class="name">{prev.data.title}</span>
+              </a>
+            ) : (
+              <span />
+            )}
+            {next ? (
+              <a class="next" href={url(`/docs/${next.id}/`)}>
+                <span class="label">下一篇</span>
+                <span class="name">{next.data.title}</span>
+              </a>
+            ) : (
+              <span />
+            )}
+          </nav>
+        )
+      }
+    </article>
+  </div>
+</Base>
+
+<script>
+  // 给正文标题加一个 # 锚点，鼠标移上去才出现
+  for (const heading of document.querySelectorAll<HTMLElement>('.docs-prose h2[id], .docs-prose h3[id]')) {
+    const anchor = document.createElement('a');
+    anchor.className = 'heading-anchor';
+    anchor.href = `#${heading.id}`;
+    anchor.setAttribute('aria-label', '复制锚点链接');
+    anchor.textContent = '#';
+    anchor.addEventListener('click', () => {
+      navigator.clipboard?.writeText(anchor.href).catch(() => {});
+    });
+    heading.appendChild(anchor);
+  }
+</script>

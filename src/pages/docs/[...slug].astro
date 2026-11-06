@@ -1,0 +1,33 @@
+---
+import { render } from 'astro:content';
+import { getDocs, groupDocs, type Doc } from '../../lib/docs';
+import Docs from '../../layouts/Docs.astro';
+
+export async function getStaticPaths() {
+  const docs = await getDocs();
+  return docs.map((doc, i) => ({
+    params: { slug: doc.id },
+    props: {
+      doc,
+      groups: groupDocs(docs),
+      prev: (docs[i - 1] as Doc | undefined) ?? null,
+      next: (docs[i + 1] as Doc | undefined) ?? null,
+    },
+  }));
+}
+
+const { doc, groups, prev, next } = Astro.props;
+const { Content } = await render(doc);
+---
+
+<Docs
+  title={doc.data.title}
+  description={doc.data.description}
+  group={doc.data.group}
+  groups={groups}
+  current={doc.id}
+  prev={prev}
+  next={next}
+>
+  <Content />
+</Docs>

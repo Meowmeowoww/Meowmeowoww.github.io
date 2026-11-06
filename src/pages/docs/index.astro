@@ -1,0 +1,37 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getDocs, groupDocs } from '../../lib/docs';
+import { url } from '../../lib/url';
+
+const docs = await getDocs();
+const groups = groupDocs(docs);
+---
+
+<Base wide title="文档" description="站内的说明与手册。" current="docs">
+  <section class="intro docs-intro">
+    <h1>文档</h1>
+    <p>这里放需要长期维护的说明、手册和配置参考。</p>
+  </section>
+
+  {
+    groups.length === 0 ? (
+      <p class="empty">
+        还没有文档。往 <code>src/content/docs/</code> 里放一个 <code>.md</code> 就会出现。
+      </p>
+    ) : (
+      groups.map((g) => (
+        <section class="doc-index-group">
+          <h2 class="doc-index-title">{g.name}</h2>
+          <div class="card-grid">
+            {g.items.map((doc) => (
+              <a class="card" href={url(`/docs/${doc.id}/`)}>
+                <span class="card-title">{doc.data.title}</span>
+                {doc.data.description && <span class="card-desc">{doc.data.description}</span>}
+              </a>
+            ))}
+          </div>
+        </section>
+      ))
+    )
+  }
+</Base>
