@@ -8,7 +8,7 @@ import { defineConfig } from 'astro/config';
 // ────────────────────────────────────────────────
 
 export default defineConfig({
-  site: 'https://yourname.github.io',
+  site: 'https://meowmeowoww.github.io',
 
   // 仓库名不是 <用户名>.github.io 时，取消注释并把仓库名填进去：
   // base: '/blog',
