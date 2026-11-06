@@ -2,6 +2,8 @@
 
 一个用 [Astro](https://astro.build/) 搭的纯静态个人博客。没有数据库，没有后台，文章就是 Markdown 文件。
 
+**线上地址：https://meowmeowoww.github.io/** —— 推送到 `main` 会自动构建部署，大约两分钟。
+
 ## 你现在看到的是什么
 
 ```
