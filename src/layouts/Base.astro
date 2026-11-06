@@ -32,6 +32,7 @@ const nav = [
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0f180f" />
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
@@ -75,7 +76,12 @@ const nav = [
 
       <footer class="site-footer">
         <span>© {new Date().getFullYear()} {SITE.author}</span>
-        <span><a href={url('/rss.xml')}>RSS</a> · 由 Astro 构建</span>
+        <span>
+          <a href={`https://github.com/${SITE.github}`}>GitHub</a>
+          <span> · </span>
+          <a href={url('/rss.xml')}>RSS</a>
+          <span> · 由 Astro 构建</span>
+        </span>
       </footer>
     </div>
   </body>

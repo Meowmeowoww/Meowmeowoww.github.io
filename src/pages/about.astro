@@ -8,27 +8,45 @@ import { SITE } from '../consts';
     <h1>关于</h1>
 
     <p>
-      这里是 {SITE.author} 的地方。写点技术，也写点别的。
+      我是生椰西瓜。白天写代码，晚上写点别的。
     </p>
 
     <p>
-      这篇文字是占位的——改成你自己的就行。比如：你在做什么，
-      关心什么，为什么还想在 2026 年写博客。
+      这里放三样东西：工作里踩过的坑、读到的有意思的东西、还有一些
+      想不明白就写下来慢慢想的问题。不追热点，也不保证更新频率。
     </p>
 
-    <h2>怎么找到我</h2>
+    <h2>在做什么</h2>
 
-    <ul>
-      <li>GitHub：<a href="https://github.com/">github.com/yourname</a></li>
-      <li>邮箱：you@example.com</li>
-    </ul>
+    <p>
+      大部分时间在跟 Web 后端和基础设施打交道。最近在琢磨两件事：
+      一是 AI 写代码之后，人的判断力该放在哪儿；二是一个项目要长到
+      多大才会开始腐烂。
+    </p>
 
     <h2>关于这个站</h2>
 
     <p>
-      用 <a href="https://astro.build/">Astro</a> 搭的静态站，
-      文章是 Markdown 文件，托管在 GitHub Pages 上。没有数据库，
-      没有后台，也没有广告。
+      用 <a href="https://astro.build/">Astro</a> 搭的纯静态站。文章是仓库里的
+      Markdown 文件，托管在 GitHub Pages，没有数据库、没有后台、没有统计脚本。
+      写法上参考了 <a href="https://laplace.live/">laplace.live</a> 那层深色底。
+    </p>
+
+    <p>
+      配色只有两个：墨绿的底，和一点西瓜瓤的红。
+    </p>
+
+    <h2>找到我</h2>
+
+    <ul>
+      <li>
+        GitHub：<a href={`https://github.com/${SITE.github}`}>github.com/{SITE.github}</a>
+      </li>
+      <li>邮箱：<a href={`mailto:${SITE.email}`}>{SITE.email}</a></li>
+    </ul>
+
+    <p>
+      写错了、想聊，都可以直接说。
     </p>
   </article>
 </Base>

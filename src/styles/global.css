@@ -1,25 +1,19 @@
 /* ── 设计变量：想换配色只改这里 ───────────────── */
 :root {
-  color-scheme: light dark;
+  color-scheme: dark;
 
-  --bg: #fdfcfb;
-  --fg: #1c1b19;
-  --muted: #6f6d68;
-  --line: #e7e3dd;
-  --accent: #b45309;
-  --code-bg: #f4f1ec;
-  --max: 42rem;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #121110;
-    --fg: #e9e6e1;
-    --muted: #9b978f;
-    --line: #2b2825;
-    --accent: #f0a868;
-    --code-bg: #1d1b18;
-  }
+  /* 底色取自 laplace.live 的那层墨绿黑 */
+  --bg: #0f180f;
+  --bg-top: #121c12;
+  --fg: #e6ece6;
+  --muted: #8a968a;
+  --line: rgba(230, 255, 230, 0.09);
+  --line-strong: rgba(230, 255, 230, 0.16);
+  --link: #9fe8b4;
+  --link-hover: #d9ffe3;
+  --accent: #ff8493;
+  --code-bg: rgba(255, 255, 255, 0.045);
+  --max: 43rem;
 }
 
 /* ── 基础 ─────────────────────────────────────── */
@@ -31,11 +25,20 @@
 
 html {
   -webkit-text-size-adjust: 100%;
+  background: var(--bg);
 }
 
 body {
   margin: 0;
-  background: var(--bg);
+  min-height: 100vh;
+  background-color: var(--bg);
+  /* 一层几乎看不出的顶部辉光，避免整页死平 */
+  background-image: radial-gradient(
+    900px 420px at 50% -8%,
+    rgba(150, 255, 185, 0.045),
+    transparent 70%
+  );
+  background-repeat: no-repeat;
   color: var(--fg);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui,
     'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
@@ -52,7 +55,12 @@ body {
 }
 
 a {
-  color: var(--fg);
+  color: var(--link);
+}
+
+::selection {
+  background: rgba(255, 132, 147, 0.28);
+  color: #fff;
 }
 
 /* ── 页头 ─────────────────────────────────────── */
@@ -62,21 +70,21 @@ a {
   justify-content: space-between;
   gap: 1rem;
   flex-wrap: wrap;
-  padding: 2.1rem 0 1.35rem;
+  padding: 2.2rem 0 1.3rem;
   border-bottom: 1px solid var(--line);
 }
 
 .brand {
   font-size: 0.95rem;
   font-weight: 600;
-  letter-spacing: 0.01em;
+  letter-spacing: 0.02em;
   text-decoration: none;
   color: var(--muted);
   transition: color 0.15s ease;
 }
 
 .brand:hover {
-  color: var(--accent);
+  color: var(--fg);
 }
 
 .site-nav {
@@ -86,28 +94,28 @@ a {
 
 .site-nav a {
   color: var(--muted);
-  font-size: 0.88rem;
+  font-size: 0.86rem;
   text-decoration: none;
   transition: color 0.15s ease;
 }
 
 .site-nav a:hover,
 .site-nav a[aria-current='page'] {
-  color: var(--accent);
+  color: var(--fg);
 }
 
 /* ── 主体 ─────────────────────────────────────── */
 main {
-  padding: 2.6rem 0 4rem;
-  min-height: 45vh;
+  padding: 3rem 0 4.5rem;
+  min-height: 48vh;
 }
 
 .intro h1 {
   margin: 0 0 0.6rem;
-  font-size: 1.5rem;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  line-height: 1.5;
+  font-size: 2.05rem;
+  font-weight: 680;
+  letter-spacing: -0.025em;
+  line-height: 1.3;
 }
 
 .intro p {
@@ -119,37 +127,38 @@ main {
 /* ── 文章列表 ─────────────────────────────────── */
 .post-list {
   list-style: none;
-  margin: 2.2rem 0 0;
+  margin: 2.4rem 0 0;
   padding: 0;
 }
 
 .post-item {
-  padding: 1.4rem 0;
+  padding: 1.45rem 0;
   border-top: 1px solid var(--line);
 }
 
 .post-item time {
   display: block;
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   color: var(--muted);
-  letter-spacing: 0.06em;
+  letter-spacing: 0.07em;
   font-variant-numeric: tabular-nums;
 }
 
 .post-item h2 {
-  margin: 0.3rem 0 0.35rem;
-  font-size: 1.12rem;
+  margin: 0.35rem 0 0.4rem;
+  font-size: 1.14rem;
   font-weight: 600;
   line-height: 1.55;
 }
 
 .post-item h2 a {
+  color: var(--fg);
   text-decoration: none;
   transition: color 0.15s ease;
 }
 
 .post-item h2 a:hover {
-  color: var(--accent);
+  color: var(--link);
 }
 
 .post-item p {
@@ -161,30 +170,15 @@ main {
 
 /* ── 文章页 ───────────────────────────────────── */
 .post-header {
-  margin-bottom: 2.2rem;
-}
-
-.back {
-  margin: 0 0 1.6rem;
-  font-size: 0.82rem;
-}
-
-.back a {
-  color: var(--muted);
-  text-decoration: none;
-  transition: color 0.15s ease;
-}
-
-.back a:hover {
-  color: var(--accent);
+  margin-bottom: 2.3rem;
 }
 
 .post-header h1 {
-  margin: 0 0 0.7rem;
-  font-size: 1.72rem;
+  margin: 0 0 0.75rem;
+  font-size: 1.8rem;
   font-weight: 650;
   line-height: 1.4;
-  letter-spacing: -0.012em;
+  letter-spacing: -0.015em;
 }
 
 .post-meta {
@@ -193,7 +187,7 @@ main {
   align-items: center;
   gap: 0.75rem;
   color: var(--muted);
-  font-size: 0.8rem;
+  font-size: 0.79rem;
   font-variant-numeric: tabular-nums;
 }
 
@@ -205,10 +199,10 @@ main {
 .tag {
   color: var(--muted);
   text-decoration: none;
-  border: 1px solid var(--line);
+  border: 1px solid var(--line-strong);
   border-radius: 999px;
   padding: 0.05rem 0.55rem;
-  font-size: 0.75rem;
+  font-size: 0.74rem;
   line-height: 1.7;
   transition: color 0.15s ease, border-color 0.15s ease;
 }
@@ -218,9 +212,24 @@ main {
   border-color: var(--accent);
 }
 
+.back {
+  margin: 0 0 1.7rem;
+  font-size: 0.8rem;
+}
+
+.back a {
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.back a:hover {
+  color: var(--fg);
+}
+
 /* ── 正文排版 ─────────────────────────────────── */
 .prose {
-  font-size: 1.02rem;
+  font-size: 1.01rem;
 }
 
 .prose > :first-child {
@@ -228,25 +237,26 @@ main {
 }
 
 .prose h2 {
-  margin: 2.5rem 0 0.85rem;
-  font-size: 1.28rem;
+  margin: 2.6rem 0 0.9rem;
+  font-size: 1.3rem;
   font-weight: 650;
   line-height: 1.5;
+  letter-spacing: -0.01em;
 }
 
 .prose h3 {
-  margin: 2rem 0 0.7rem;
+  margin: 2.1rem 0 0.7rem;
   font-size: 1.08rem;
   font-weight: 650;
 }
 
 .prose p {
-  margin: 1.1rem 0;
+  margin: 1.15rem 0;
 }
 
 .prose ul,
 .prose ol {
-  margin: 1.1rem 0;
+  margin: 1.15rem 0;
   padding-left: 1.25rem;
 }
 
@@ -259,20 +269,25 @@ main {
 }
 
 .prose a {
-  color: var(--accent);
+  color: var(--link);
   text-decoration: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 0.2em;
 }
 
+.prose a:hover {
+  color: var(--link-hover);
+}
+
 .prose strong {
   font-weight: 620;
+  color: #f3f8f3;
 }
 
 .prose blockquote {
-  margin: 1.6rem 0;
+  margin: 1.7rem 0;
   padding: 0.1rem 0 0.1rem 1.1rem;
-  border-left: 2px solid var(--line);
+  border-left: 2px solid var(--line-strong);
   color: var(--muted);
 }
 
@@ -281,7 +296,7 @@ main {
 }
 
 .prose hr {
-  margin: 2.8rem 0;
+  margin: 2.9rem 0;
   border: 0;
   border-top: 1px solid var(--line);
 }
@@ -296,13 +311,14 @@ main {
 }
 
 .prose pre {
-  margin: 1.4rem 0;
+  margin: 1.5rem 0;
   padding: 1rem 1.15rem;
-  background: var(--code-bg);
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--line);
   border-radius: 8px;
   overflow-x: auto;
   line-height: 1.65;
-  font-size: 0.86rem;
+  font-size: 0.85rem;
 }
 
 .prose pre code {
@@ -320,20 +336,22 @@ main {
 .prose table {
   width: 100%;
   border-collapse: collapse;
-  margin: 1.4rem 0;
+  margin: 1.5rem 0;
   font-size: 0.9rem;
 }
 
 .prose th,
 .prose td {
   border-bottom: 1px solid var(--line);
-  padding: 0.5rem 0.6rem;
+  padding: 0.55rem 0.65rem;
   text-align: left;
 }
 
 .prose th {
   font-weight: 600;
   color: var(--muted);
+  font-size: 0.82rem;
+  letter-spacing: 0.03em;
 }
 
 /* ── 页脚 ─────────────────────────────────────── */
@@ -342,10 +360,10 @@ main {
   justify-content: space-between;
   gap: 1rem;
   flex-wrap: wrap;
-  padding: 1.6rem 0 3rem;
+  padding: 1.7rem 0 3.2rem;
   border-top: 1px solid var(--line);
   color: var(--muted);
-  font-size: 0.8rem;
+  font-size: 0.78rem;
 }
 
 .site-footer a {
@@ -354,26 +372,25 @@ main {
 }
 
 .site-footer a:hover {
-  color: var(--accent);
+  color: var(--link);
 }
 
 /* ── 空状态 / 404 ─────────────────────────────── */
 .empty {
   color: var(--muted);
-  font-size: 0.92rem;
+  font-size: 0.9rem;
   margin-top: 2rem;
 }
 
 .notfound {
-  text-align: left;
   padding: 2rem 0;
 }
 
 .notfound .code {
-  font-size: 3.2rem;
+  font-size: 3.4rem;
   font-weight: 700;
   letter-spacing: -0.03em;
-  color: var(--line);
+  color: rgba(230, 255, 230, 0.13);
   line-height: 1;
-  margin: 0 0 0.8rem;
+  margin: 0 0 0.9rem;
 }

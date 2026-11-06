@@ -1,9 +1,10 @@
 // 站点的身份信息。改这一个文件，全站生效。
 export const SITE = {
-  title: '未命名博客',
-  description: '一个还没想好写什么的角落。',
-  author: '你的名字',
+  title: '生椰西瓜',
+  description: '技术、工具，和一些没地方放的想法。',
+  author: '生椰西瓜',
   lang: 'zh-CN',
-  // 头像或 logo 的路径，没有就留空
-  avatar: '',
+  // GitHub 用户名，关于页和页脚会用到
+  github: 'Meowmeowoww',
+  email: 'hello@example.com',
 };
