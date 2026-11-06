@@ -1,6 +1,7 @@
 ---
 import { SITE } from '../consts';
 import { url } from '../lib/url';
+import LightBeams from '../components/LightBeams.astro';
 import '../styles/global.css';
 
 interface Props {
@@ -8,6 +9,7 @@ interface Props {
   description?: string;
   type?: 'website' | 'article';
   current?: string;
+  wide?: boolean;
 }
 
 const {
@@ -15,15 +17,17 @@ const {
   description = SITE.description,
   type = 'website',
   current = '',
+  wide = false,
 } = Astro.props;
 
 const pageTitle = title ? `${title} · ${SITE.title}` : SITE.title;
 const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url).href;
 
 const nav = [
-  { href: url('/'), label: '首页', key: 'home' },
-  { href: url('/tags/'), label: '标签', key: 'tags' },
-  { href: url('/about/'), label: '关于', key: 'about' },
+  { href: url('/'), label: '首页', key: 'home', d: 'M3 10.6 12 3.4l9 7.2M5.6 9.4V20h12.8V9.4' },
+  { href: url('/tags/'), label: '标签', key: 'tags', d: 'M3.5 11.6V4.2h7.4l9.4 9.4-7.4 7.4-9.4-9.4ZM7.6 7.6h.01' },
+  { href: url('/about/'), label: '关于', key: 'about', d: 'M12 11.4a3.3 3.3 0 1 0 0-6.6 3.3 3.3 0 0 0 0 6.6ZM4.8 20c1.4-3.4 4-5 7.2-5s5.8 1.6 7.2 5' },
+  { href: url('/rss.xml'), label: 'RSS', key: 'rss', d: 'M5 18.4h.01M5 12.4a6.6 6.6 0 0 1 6.6 6.6M5 6a13 13 0 0 1 13 13' },
 ];
 ---
 
@@ -52,21 +56,34 @@ const nav = [
     <meta name="generator" content={Astro.generator} />
   </head>
   <body>
-    <div class="wrap">
-      <header class="site-header">
-        <a class="brand" href={url('/')}>{SITE.title}</a>
-        <nav class="site-nav">
+    <LightBeams />
+
+    <div class:list={['shell', wide && 'shell-wide']}>
+      <header class="topbar">
+        <nav class="topnav">
           {
             nav.map((item) => (
               <a
                 href={item.href}
                 aria-current={current === item.key ? 'page' : undefined}
               >
-                {item.label}
+                <svg
+                  viewBox="0 0 24 24"
+                  width="14"
+                  height="14"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.7"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d={item.d} />
+                </svg>
+                <span>{item.label}</span>
               </a>
             ))
           }
-          <a href={url('/rss.xml')}>RSS</a>
         </nav>
       </header>
 
@@ -75,12 +92,13 @@ const nav = [
       </main>
 
       <footer class="site-footer">
-        <span>© {new Date().getFullYear()} {SITE.author}</span>
-        <span>
+        <span class="foot-brand">{SITE.title}</span>
+        <span class="foot-links">
           <a href={`https://github.com/${SITE.github}`}>GitHub</a>
-          <span> · </span>
+          <span class="dot">·</span>
           <a href={url('/rss.xml')}>RSS</a>
-          <span> · 由 Astro 构建</span>
+          <span class="dot">·</span>
+          <span>© {new Date().getFullYear()}</span>
         </span>
       </footer>
     </div>

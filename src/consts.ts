@@ -6,5 +6,5 @@ export const SITE = {
   lang: 'zh-CN',
   // GitHub 用户名，关于页和页脚会用到
   github: 'Meowmeowoww',
-  email: 'hello@example.com',
+  email: 'wuxuebe625825@163.com',
 };

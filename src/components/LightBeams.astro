@@ -1,0 +1,142 @@
+---
+// 侧上方照下来的体积光（丁达尔效应）。
+// 纯 canvas 2D：几条平行的光带 + 柔光晕 + 向下渐隐，无依赖、无 WebGL。
+---
+<div class="beams" aria-hidden="true">
+  <canvas id="beams-canvas"></canvas>
+</div>
+
+<script>
+  const canvas = document.getElementById('beams-canvas');
+
+  if (canvas instanceof HTMLCanvasElement) {
+    const ctx = canvas.getContext('2d');
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // 每条光带：横向位置、宽度、基础亮度、相位
+    const BANDS = [
+      { x: -0.66, w: 0.035, a: 0.6, p: 0.0 },
+      { x: -0.46, w: 0.075, a: 1.1, p: 1.7 },
+      { x: -0.28, w: 0.028, a: 0.5, p: 3.1 },
+      { x: -0.12, w: 0.095, a: 1.25, p: 0.9 },
+      { x: 0.04, w: 0.032, a: 0.55, p: 4.2 },
+      { x: 0.17, w: 0.06, a: 0.95, p: 2.4 },
+      { x: 0.30, w: 0.038, a: 0.7, p: 5.3 },
+      { x: 0.44, w: 0.085, a: 1.05, p: 1.2 },
+      { x: 0.60, w: 0.026, a: 0.45, p: 3.8 },
+      { x: 0.74, w: 0.05, a: 0.75, p: 0.4 },
+    ];
+
+    let w = 0;
+    let h = 0;
+    let raf = 0;
+    let last = 0;
+
+    function resize() {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      w = window.innerWidth;
+      h = window.innerHeight;
+      canvas.width = Math.floor(w * dpr);
+      canvas.height = Math.floor(h * dpr);
+      canvas.style.width = w + 'px';
+      canvas.style.height = h + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    function paint(time: number) {
+      const t = time * 0.0001;
+
+      ctx.clearRect(0, 0, w, h);
+
+      // 光源在左上方的画外
+      const ox = w * 0.12;
+      const oy = -h * 0.25;
+      const len = h * 2.1;
+
+      const glow = ctx.createRadialGradient(ox, oy + h * 0.15, 0, ox, oy + h * 0.15, h * 0.75);
+      glow.addColorStop(0, 'rgba(216, 255, 230, 0.22)');
+      glow.addColorStop(0.3, 'rgba(175, 245, 205, 0.06)');
+      glow.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      ctx.fillStyle = glow;
+      ctx.fillRect(0, 0, w, h);
+
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.filter = 'blur(6px)';
+
+      // 光带整体往右下斜
+      const tilt = 0.30 + Math.sin(t * 0.35) * 0.012;
+
+      ctx.save();
+      ctx.translate(ox, oy);
+      ctx.rotate(tilt);
+
+      for (const b of BANDS) {
+        const drift = Math.sin(t * 0.55 + b.p) * w * 0.012;
+        const breathe = 0.55 + 0.45 * Math.sin(t * 0.8 + b.p * 1.3);
+        const alpha = 0.075 * b.a * (0.55 + 0.75 * breathe);
+
+        const cx = b.x * w + drift;
+        const half = (b.w * w) / 2;
+
+        const g = ctx.createLinearGradient(cx - half, 0, cx + half, 0);
+        g.addColorStop(0, 'rgba(190, 255, 214, 0)');
+        g.addColorStop(0.35, `rgba(206, 255, 224, ${alpha.toFixed(3)})`);
+        g.addColorStop(0.62, `rgba(228, 255, 238, ${(alpha * 1.1).toFixed(3)})`);
+        g.addColorStop(1, 'rgba(190, 255, 214, 0)');
+
+        ctx.fillStyle = g;
+        ctx.fillRect(cx - half, -h * 0.1, half * 2, len);
+      }
+
+      ctx.restore();
+
+      // 往下渐隐，别糊到正文上
+      ctx.filter = 'none';
+      ctx.globalCompositeOperation = 'destination-in';
+      const fade = ctx.createLinearGradient(0, 0, 0, h);
+      fade.addColorStop(0, 'rgba(0, 0, 0, 1)');
+      fade.addColorStop(0.45, 'rgba(0, 0, 0, 0.92)');
+      fade.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      ctx.fillStyle = fade;
+      ctx.fillRect(0, 0, w, h);
+
+      ctx.globalCompositeOperation = 'source-over';
+    }
+
+    function loop(time: number) {
+      raf = requestAnimationFrame(loop);
+      if (time - last < 33) return; // 30fps 上限
+      last = time;
+      paint(time);
+    }
+
+    function start() {
+      cancelAnimationFrame(raf);
+      if (reduce) {
+        paint(0);
+        return;
+      }
+      raf = requestAnimationFrame(loop);
+    }
+
+    resize();
+    start();
+
+    let resizeTimer = 0;
+    window.addEventListener('resize', () => {
+      window.clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(() => {
+        resize();
+        paint(performance.now());
+      }, 150);
+    });
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        cancelAnimationFrame(raf);
+      } else if (!reduce) {
+        raf = requestAnimationFrame(loop);
+      }
+    });
+  }
+</script>

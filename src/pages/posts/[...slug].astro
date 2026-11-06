@@ -20,40 +20,94 @@ interface Props {
 }
 
 const { post } = Astro.props;
-const { Content } = await render(post);
+const { Content, headings } = await render(post);
 const tags = post.data.tags ?? [];
+const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
 ---
 
-<Base title={post.data.title} description={post.data.description} type="article" current="posts">
-  <article>
-    <p class="back"><a href={url('/')}>← 全部文章</a></p>
-    <header class="post-header">
-      <h1>{post.data.title}</h1>
-      <div class="post-meta">
-        <time datetime={post.data.pubDate.toISOString()}>
-          {formatDate(post.data.pubDate)}
-        </time>
-        {
-          post.data.updatedDate && (
-            <span>更新于 {formatDate(post.data.updatedDate)}</span>
-          )
-        }
-        {
-          tags.length > 0 && (
-            <div class="post-tags">
-              {tags.map((tag) => (
-                <a class="tag" href={url(`/tags/${tag}/`)}>
-                  {tag}
-                </a>
-              ))}
-            </div>
-          )
-        }
-      </div>
-    </header>
+<Base
+  wide
+  title={post.data.title}
+  description={post.data.description}
+  type="article"
+  current="posts"
+>
+  <div class:list={['post-grid', toc.length < 2 && 'post-grid-plain']}>
+    <article>
+      <p class="back"><a href={url('/')}>← 全部文章</a></p>
 
-    <div class="prose">
-      <Content />
-    </div>
-  </article>
+      <header class="post-header">
+        <h1>{post.data.title}</h1>
+        <div class="post-meta">
+          <time datetime={post.data.pubDate.toISOString()}>
+            {formatDate(post.data.pubDate)}
+          </time>
+          {
+            post.data.updatedDate && (
+              <span>更新于 {formatDate(post.data.updatedDate)}</span>
+            )
+          }
+          {
+            tags.length > 0 && (
+              <div class="post-tags">
+                {tags.map((tag) => (
+                  <a class="tag" href={url(`/tags/${tag}/`)}>
+                    {tag}
+                  </a>
+                ))}
+              </div>
+            )
+          }
+        </div>
+      </header>
+
+      <div class="prose">
+        <Content />
+      </div>
+    </article>
+
+    {
+      toc.length >= 2 && (
+        <aside class="toc">
+          <p class="toc-title">本页内容</p>
+          <ul>
+            {toc.map((h) => (
+              <li class:list={['toc-item', `depth-${h.depth}`]}>
+                <a href={`#${h.slug}`}>{h.text}</a>
+              </li>
+            ))}
+          </ul>
+        </aside>
+      )
+    }
+  </div>
 </Base>
+
+<script>
+  const links = Array.from(
+    document.querySelectorAll<HTMLAnchorElement>('.toc a')
+  );
+  const heads = links
+    .map((a) => document.getElementById(decodeURIComponent(a.hash.slice(1))))
+    .filter((el): el is HTMLElement => Boolean(el));
+
+  if (heads.length && 'IntersectionObserver' in window) {
+    const setActive = (id: string) => {
+      for (const a of links) {
+        a.classList.toggle('is-active', a.hash === `#${id}`);
+      }
+    };
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+        if (visible[0]) setActive(visible[0].target.id);
+      },
+      { rootMargin: '-10% 0px -70% 0px', threshold: [0, 1] }
+    );
+
+    for (const h of heads) io.observe(h);
+  }
+</script>
