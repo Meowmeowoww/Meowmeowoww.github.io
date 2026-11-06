@@ -101,25 +101,6 @@ a {
   );
 }
 
-/* 贴着光标走的一块柔光，不做缓动 */
-.glow {
-  position: fixed;
-  inset: 0;
-  z-index: 2;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.6s ease;
-  background: radial-gradient(
-    24rem 24rem at var(--mx, 50%) var(--my, 50%),
-    oklch(0.9 0.06 150 / 0.16),
-    transparent 70%
-  );
-}
-
-.pointer-active .glow {
-  opacity: 1;
-}
-
 .lights {
   position: fixed;
   top: 0;
@@ -1165,4 +1146,37 @@ main {
   ::view-transition-new(root) {
     animation: none;
   }
+}
+
+/* ── 留言 / 评论（giscus） ──────────────────────── */
+.comments {
+  margin-top: 3rem;
+  padding-top: 1.6rem;
+  border-top: 1px solid var(--line);
+}
+
+.comments .giscus {
+  min-height: 180px;
+}
+
+.guestbook-note {
+  margin-top: 1.6rem;
+}
+
+.guestbook-note .callout {
+  margin: 0;
+}
+
+.guestbook-back {
+  margin-top: 2rem;
+  font-size: 0.84rem;
+}
+
+.guestbook-back a {
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.guestbook-back a:hover {
+  color: var(--link);
 }

@@ -2,6 +2,7 @@
 import type { CollectionEntry } from 'astro:content';
 import { getCollection, render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
+import Comments from '../../components/Comments.astro';
 import { formatDate } from '../../lib/format';
 import { url } from '../../lib/url';
 
@@ -64,6 +65,8 @@ const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
       <div class="prose">
         <Content />
       </div>
+
+      <Comments />
     </article>
 
     {

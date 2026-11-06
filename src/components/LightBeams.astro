@@ -1,11 +1,10 @@
 ---
-// 背景四层：图片（压暗）→ 渐变蒙版 → 高光 → 光束，外加一层光标拖尾。
+// 背景三层：图片（压暗）→ 渐变蒙版 → 光束，外加一层光标拖尾。
 // 机制参考 laplace.live：光标在页面里时才「激活」，整层随光标做视差 + 轻微缩放；
 // 光标离开窗口就淡回待机态并回中。这里是重写的实现，没引入动效库。
 ---
 <div class="bg" aria-hidden="true"></div>
 <div class="bg-grad" aria-hidden="true"></div>
-<div class="glow" aria-hidden="true"></div>
 
 <div class="lights" data-depth="0.2" aria-hidden="true"><div class="light"></div></div>
 <div class="lights" data-depth="0.6" aria-hidden="true"><div class="light light2"></div></div>
@@ -111,10 +110,6 @@
     (e) => {
       px = e.clientX;
       py = e.clientY;
-
-      // 高光直接贴着光标，不做缓动
-      root.style.setProperty('--mx', `${px}px`);
-      root.style.setProperty('--my', `${py}px`);
 
       if (reduce.matches) return;
 

@@ -1,0 +1,29 @@
+---
+import Base from '../layouts/Base.astro';
+import Comments from '../components/Comments.astro';
+import { SITE } from '../consts';
+---
+
+<Base title="留言" description="想说点什么就写在这儿。" current="guestbook">
+  <section class="intro">
+    <h1>留言</h1>
+    <p>想说什么都行：文章里的错、想看的主题，或者只是路过打个招呼。</p>
+  </section>
+
+  <div class="prose guestbook-note">
+    <div class="callout callout-info">
+      <p class="callout-title">需要 GitHub 账号</p>
+      <p>
+        评论会作为 Discussion 存在仓库里，所以要用 GitHub 登录才能发。不用留邮箱，也不会有人给你发广告。
+      </p>
+    </div>
+  </div>
+
+  <Comments />
+
+  <p class="guestbook-back">
+    <a href={`https://github.com/${SITE.github}/Meowmeowoww.github.io/discussions`} rel="noopener" target="_blank">
+      在 GitHub 上直接看全部讨论 →
+    </a>
+  </p>
+</Base>
