@@ -76,10 +76,11 @@
       el.style.transform = `translate3d(${(x * 22 * depth).toFixed(2)}px, ${(y * 22 * depth).toFixed(2)}px, 0)`;
     }
 
-    // 背景：反向小位移 + 越靠边越大一点的缩放
+    // 背景：光标往哪边，画面就往反方向让开，等于「往那边多露一点」。
+    // 幅度按视口算（左右 6%、上下 5%），任何屏幕都不会露出视频边缘。
     const spread = Math.min(1, Math.hypot(x, y) / 1.2);
-    root.style.setProperty('--par-x', `${(x * -14).toFixed(2)}px`);
-    root.style.setProperty('--par-y', `${(y * -10).toFixed(2)}px`);
+    root.style.setProperty('--par-x', `${(-x * window.innerWidth * 0.06).toFixed(2)}px`);
+    root.style.setProperty('--par-y', `${(-y * window.innerHeight * 0.05).toFixed(2)}px`);
     root.style.setProperty('--zoom', spread.toFixed(3));
 
     // 拖尾：每个点追前一个点，越靠后越慢
