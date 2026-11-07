@@ -243,10 +243,14 @@ a {
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
-  color: color-mix(in oklch, var(--fg) 78%, transparent);
+  color: color-mix(in oklch, var(--fg) 88%, transparent);
   font-family: var(--font-logo);
   font-size: 1.0625rem;
-  font-weight: 500;
+  font-weight: 700;
+  /* 系统中文只有 Regular/Bold 两档，17px 下 Bold 仍偏细，
+     补 0.3px 描边让笔画实一点（不改行高、不位移） */
+  -webkit-text-stroke: 0.3px currentColor;
+  paint-order: stroke fill;
   line-height: 1;
   letter-spacing: 0.01em;
   text-transform: uppercase;
