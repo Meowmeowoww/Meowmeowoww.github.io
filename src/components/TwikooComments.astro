@@ -66,7 +66,8 @@ const TWIKOO_ENV =
     }
 
     try {
-      await twikoo.init({ env, el, lang: 'zh-CN' });
+      // 2.x 的参数名是 envId（不是 env）；HTTP 部署填完整地址
+      await twikoo.init({ envId: env, el, lang: 'zh-CN' });
     } catch {
       fallback?.removeAttribute('hidden');
     }
