@@ -63,6 +63,36 @@
       x: px,
       y: py,
     }));
+
+    const video = document.querySelector<HTMLVideoElement>('video.bg');
+    if (video && !video.dataset.measured) {
+      video.dataset.measured = '1';
+      video.addEventListener('loadedmetadata', measureBg);
+    }
+    measureBg();
+  }
+
+  window.addEventListener('resize', measureBg);
+
+  // 背景取景：视频用 cover 铺满，本身就有超出视口的部分，
+  // 平移只是把「可见窗口」在画面里挪一挪，所以永远不会露边。
+  // 可移动的距离 = (渲染尺寸 - 视口尺寸) / 2，超出就被 cover 裁掉了。
+  let panLimitX = 0;
+  let panLimitY = 0;
+
+  function measureBg() {
+    const video = document.querySelector<HTMLVideoElement>('video.bg');
+    if (!video || !video.videoWidth) {
+      panLimitX = window.innerWidth * 0.04;
+      panLimitY = window.innerHeight * 0.04;
+      return;
+    }
+    const scale = Math.max(
+      window.innerWidth / video.videoWidth,
+      window.innerHeight / video.videoHeight
+    );
+    panLimitX = Math.max(0, (video.videoWidth * scale - window.innerWidth) / 2);
+    panLimitY = Math.max(0, (video.videoHeight * scale - window.innerHeight) / 2);
   }
 
   function tick() {
@@ -76,11 +106,15 @@
       el.style.transform = `translate3d(${(x * 22 * depth).toFixed(2)}px, ${(y * 22 * depth).toFixed(2)}px, 0)`;
     }
 
-    // 背景：光标往哪边，画面就往反方向让开，等于「往那边多露一点」。
-    // 幅度按视口算（左右 6%、上下 5%），任何屏幕都不会露出视频边缘。
+    // 光标往右 → 取景窗口往左挪 → 右边露得更多
+    const bg = document.querySelector<HTMLVideoElement>('video.bg');
+    if (bg) {
+      const offsetX = -x * panLimitX;
+      const offsetY = -y * panLimitY;
+      bg.style.objectPosition = `calc(50% + ${offsetX.toFixed(1)}px) calc(50% + ${offsetY.toFixed(1)}px)`;
+    }
+
     const spread = Math.min(1, Math.hypot(x, y) / 1.2);
-    root.style.setProperty('--par-x', `${(-x * window.innerWidth * 0.06).toFixed(2)}px`);
-    root.style.setProperty('--par-y', `${(-y * window.innerHeight * 0.05).toFixed(2)}px`);
     root.style.setProperty('--zoom', spread.toFixed(3));
 
     // 拖尾：每个点追前一个点，越靠后越慢
