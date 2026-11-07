@@ -1210,3 +1210,31 @@ main {
 .comments-fallback a {
   color: var(--link);
 }
+
+/* ── 自定义光标 ─────────────────────────────────── */
+/* 想换样式：直接替换 public/cursor.png（PNG，≤32×32，带透明），
+   再把下面两个 12 12 改成你自己的热点坐标（从图片左上角算）。 */
+@media (pointer: fine) {
+  html,
+  body {
+    cursor: url('/cursor.png') 12 12, auto;
+  }
+
+  a,
+  button,
+  [role='button'],
+  summary,
+  label,
+  select,
+  .tag,
+  .card {
+    cursor: url('/cursor.png') 12 12, pointer;
+  }
+
+  /* 打字的地方保持系统光标，不然定位很难受 */
+  input,
+  textarea,
+  [contenteditable='true'] {
+    cursor: text;
+  }
+}
