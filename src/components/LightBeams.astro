@@ -1,9 +1,21 @@
 ---
-// 背景三层：图片（压暗）→ 渐变蒙版 → 光束，外加一层光标拖尾。
+// 背景三层：视频（压暗）→ 渐变蒙版 → 光束，外加一层光标拖尾。
 // 机制参考 laplace.live：光标在页面里时才「激活」，整层随光标做视差 + 轻微缩放；
 // 光标离开窗口就淡回待机态并回中。这里是重写的实现，没引入动效库。
 ---
-<div class="bg" aria-hidden="true"></div>
+<video
+  class="bg"
+  autoplay
+  muted
+  loop
+  playsinline
+  preload="metadata"
+  poster="/bg/poster.jpg"
+  aria-hidden="true"
+  tabindex="-1"
+>
+  <source src="/bg/video.mp4" type="video/mp4" />
+</video>
 <div class="bg-grad" aria-hidden="true"></div>
 
 <div class="lights" data-depth="0.2" aria-hidden="true"><div class="light"></div></div>
@@ -137,15 +149,28 @@
     if (document.hidden) setActive(false);
   });
 
+  // 尊重系统的「减少动态效果」：背景视频不播放，只停在封面上
+  function syncVideo() {
+    const video = document.querySelector<HTMLVideoElement>('video.bg');
+    if (!video) return;
+    if (reduce.matches) video.pause();
+    else video.play().catch(() => {});
+  }
+
   reduce.addEventListener('change', () => {
     if (reduce.matches) {
       setActive(false);
       cancelAnimationFrame(raf);
       raf = 0;
     }
+    syncVideo();
   });
 
   initDom();
+  syncVideo();
   // 开了页面转场后，导航时 DOM 会被替换，这里重新取一次节点
-  document.addEventListener('astro:page-load', initDom);
+  document.addEventListener('astro:page-load', () => {
+    initDom();
+    syncVideo();
+  });
 </script>
