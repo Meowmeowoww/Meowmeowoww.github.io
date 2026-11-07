@@ -1165,14 +1165,14 @@ main {
   }
 }
 
-/* ── 留言 / 评论（giscus） ──────────────────────── */
+/* ── 留言 / 评论（Twikoo） ──────────────────────── */
 .comments {
   margin-top: 3rem;
   padding-top: 1.6rem;
   border-top: 1px solid var(--line);
 }
 
-.comments .giscus {
+.comments .twikoo {
   min-height: 180px;
 }
 
