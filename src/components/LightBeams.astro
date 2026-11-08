@@ -68,34 +68,11 @@
     const video = document.querySelector<HTMLVideoElement>('video.bg');
     if (video && !video.dataset.measured) {
       video.dataset.measured = '1';
-      video.addEventListener('loadedmetadata', measureBg);
     }
-    measureBg();
   }
 
-  window.addEventListener('resize', measureBg);
-
-  // 背景取景：视频用 cover 铺满，本身就有超出视口的部分，
-  // 平移只是把「可见窗口」在画面里挪一挪，所以永远不会露边。
-  // 可移动的距离 = (渲染尺寸 - 视口尺寸) / 2，超出就被 cover 裁掉了。
-  let panLimitX = 0;
-  let panLimitY = 0;
-
-  function measureBg() {
-    const video = document.querySelector<HTMLVideoElement>('video.bg');
-    if (!video || !video.videoWidth) {
-      panLimitX = window.innerWidth * 0.04;
-      panLimitY = window.innerHeight * 0.04;
-      return;
-    }
-    const scale = Math.max(
-      window.innerWidth / video.videoWidth,
-      window.innerHeight / video.videoHeight
-    );
-    panLimitX = Math.max(0, (video.videoWidth * scale - window.innerWidth) / 2);
-    panLimitY = Math.max(0, (video.videoHeight * scale - window.innerHeight) / 2);
-  }
-
+  // 背景视差：只改 transform（GPU 合成层），不再每帧改 object-position。
+  // 改 object-position 会让视频每帧重新布局 + 重绘，1080p60 的视频直接卡成幻灯片。
   function tick() {
     raf = 0;
 
@@ -107,12 +84,9 @@
       el.style.transform = `translate3d(${(x * 22 * depth).toFixed(2)}px, ${(y * 22 * depth).toFixed(2)}px, 0)`;
     }
 
-    // 光标往右 → 取景窗口往左挪 → 右边露得更多
     const bg = document.querySelector<HTMLVideoElement>('video.bg');
     if (bg) {
-      const offsetX = -x * panLimitX;
-      const offsetY = -y * panLimitY;
-      bg.style.objectPosition = `calc(50% + ${offsetX.toFixed(1)}px) calc(50% + ${offsetY.toFixed(1)}px)`;
+      bg.style.transform = `translate3d(${(-x * 16).toFixed(1)}px, ${(-y * 11).toFixed(1)}px, 0) scale(1.08)`;
     }
 
     const spread = Math.min(1, Math.hypot(x, y) / 1.2);
@@ -190,7 +164,14 @@
   document.addEventListener('pointerleave', () => setActive(false));
   window.addEventListener('blur', () => setActive(false));
   document.addEventListener('visibilitychange', () => {
-    if (document.hidden) setActive(false);
+    const video = document.querySelector<HTMLVideoElement>('video.bg');
+    if (document.hidden) {
+      setActive(false);
+      // 后台别继续解码 1080p60
+      video?.pause();
+    } else if (video && !reduce.matches) {
+      video.play().catch(() => {});
+    }
   });
 
   // 尊重系统的「减少动态效果」：背景视频不播放，只停在封面上

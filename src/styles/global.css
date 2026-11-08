@@ -119,16 +119,16 @@ a {
   height: 100%;
   object-fit: cover;
   object-position: 50% 50%;
-  filter: brightness(0.5) saturate(1.08) blur(2px);
-  transform: scale(calc(1 + var(--zoom, 0) * 0.03));
-  transition: filter 0.7s ease, opacity 0.7s ease;
+  /* 不再给视频加 filter：整屏视频每帧重新做 blur/brightness 是最大的卡顿来源。
+     压暗改由上面的 .bg-grad 蒙版负责。 */
+  transform: translate3d(0, 0, 0) scale(1.08);
+  transition: opacity 0.7s ease;
   pointer-events: none;
-  will-change: transform, object-position;
+  will-change: transform;
 }
 
 .pointer-active .bg {
   opacity: 1;
-  filter: brightness(0.72) saturate(1.15) blur(1px);
 }
 
 .bg-grad {
@@ -137,7 +137,8 @@ a {
   z-index: 1;
   pointer-events: none;
   transition: opacity 0.7s ease;
-  background:
+  background-color: rgba(6, 14, 30, 0.52);
+  background-image:
     radial-gradient(
       120% 70% at 50% 0%,
       rgba(4, 10, 22, 0) 30%,
@@ -152,8 +153,9 @@ a {
     );
 }
 
+/* 鼠标进来整体提亮：只改蒙版不透明度，视频本身不动 */
 .pointer-active .bg-grad {
-  opacity: 0.85;
+  opacity: 0.8;
 }
 
 .lights {
