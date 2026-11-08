@@ -1276,12 +1276,12 @@ main {
 }
 
 /* ── 自定义光标 ─────────────────────────────────── */
-/* 想换样式：直接替换 public/cursor.png（PNG，≤32×32，带透明），
-   再把下面两个 12 12 改成你自己的热点坐标（从图片左上角算）。 */
+/* 来自 DachenPointer 主题：.ani 里抽帧转成的 32px PNG（public/cursors/）。
+   热点坐标从原 .cur 头里读的，缩放一半后得到。 */
 @media (pointer: fine) {
   html,
   body {
-    cursor: url('/cursor.png') 12 12, auto;
+    cursor: url('/cursors/default32.png') 0 0, auto;
   }
 
   a,
@@ -1292,7 +1292,7 @@ main {
   select,
   .tag,
   .card {
-    cursor: url('/cursor.png') 12 12, pointer;
+    cursor: url('/cursors/link32.png') 0 0, pointer;
   }
 
   /* 打字的地方保持系统光标，不然定位很难受 */
@@ -1301,4 +1301,39 @@ main {
   [contenteditable='true'] {
     cursor: text;
   }
+}
+
+/* ── 首页社交入口 ─────────────────────────────── */
+.social-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.6rem;
+  margin: 3rem 0 0;
+  padding-top: 2.4rem;
+  border-top: 1px solid var(--line);
+}
+
+.social-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.48rem 0.95rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+}
+
+.social-pill svg {
+  opacity: 0.85;
+}
+
+.social-pill:hover {
+  color: var(--fg);
+  border-color: var(--accent);
+  background: rgba(255, 255, 255, 0.04);
 }
