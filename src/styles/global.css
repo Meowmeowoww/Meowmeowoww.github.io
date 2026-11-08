@@ -1177,11 +1177,13 @@ main {
   z-index: 4;
   pointer-events: none;
   opacity: 0;
-  transition: opacity 0.35s ease;
+  transition: opacity 0.5s ease;
 }
 
-.pointer-active .trail {
+/* 只在鼠标真的在动的时候出现；停手就淡掉，光标下面不留圆点 */
+.trail-moving .trail {
   opacity: 1;
+  transition: opacity 0.12s linear;
 }
 
 .trail span {
@@ -1193,10 +1195,24 @@ main {
   margin-left: calc(-6px + var(--i) * 0.45px);
   margin-top: calc(-6px + var(--i) * 0.45px);
   border-radius: 50%;
-  background: oklch(0.96 0.08 150 / calc(0.5 - var(--i) * 0.035));
   filter: blur(calc(var(--i) * 0.3px));
+  opacity: calc(0.55 - var(--i) * 0.042);
   will-change: transform;
 }
+
+/* 颜色取自 --grad：粉 → 淡紫 → 蓝 → 青 */
+.trail span:nth-child(1) { background: #ffb3d3; }
+.trail span:nth-child(2) { background: #ffc2da; }
+.trail span:nth-child(3) { background: #ffd0e3; }
+.trail span:nth-child(4) { background: #efd4ee; }
+.trail span:nth-child(5) { background: #dcd6f6; }
+.trail span:nth-child(6) { background: #c9d8fb; }
+.trail span:nth-child(7) { background: #b9d8ff; }
+.trail span:nth-child(8) { background: #acd4ff; }
+.trail span:nth-child(9) { background: #9fd0ff; }
+.trail span:nth-child(10) { background: #8fd9ef; }
+.trail span:nth-child(11) { background: #86deeb; }
+.trail span:nth-child(12) { background: #7fe3e0; }
 
 /* ── 页面转场 ───────────────────────────────────── */
 /* 由 Base.astro 里的 ClientRouter 触发；两页之间整体轻微位移 + 淡入淡出 */

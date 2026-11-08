@@ -55,6 +55,7 @@
   let hasPointer = false;
   let px = 0; // 光标实际坐标，拖尾从这儿出发
   let py = 0;
+  let idleTimer = 0; // 停手后收起拖尾，别在静止光标下面留个圆点
 
   function initDom() {
     layers = Array.from(document.querySelectorAll<HTMLElement>('.lights'));
@@ -148,6 +149,8 @@
       // 离开时目标归零，让它自己缓回去
       tx = 0;
       ty = 0;
+      root.classList.remove('trail-moving');
+      window.clearTimeout(idleTimer);
     }
     start();
   }
@@ -170,6 +173,12 @@
       }
 
       setActive(true);
+
+      // 只有真的在动才显示拖尾
+      root.classList.add('trail-moving');
+      window.clearTimeout(idleTimer);
+      idleTimer = window.setTimeout(() => root.classList.remove('trail-moving'), 380);
+
       tx = (px / window.innerWidth - 0.5) * 2;
       ty = (py / window.innerHeight - 0.5) * 2;
       start();
